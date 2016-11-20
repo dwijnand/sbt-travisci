@@ -1,0 +1,28 @@
+language: scala
+jdk: oraclejdk8
+scala: 2.10.6
+script: project/travis.sh
+
+# Build only master and version tags - http://stackoverflow.com/a/31882307/463761
+branches:
+  only:
+    - master
+    - /^v[0-9]/
+
+env:
+  global:
+    - COURSIER_PROGRESS=0
+    - secure: R/zJFH2wlvDMMoKuySAedHwmrz/nlO7t/z+dbU2jAdYVgs8GxJX5cRShp24c50s+VJJrs7QdTt21pEj9fnbiNfC2VKp7bsN2+dVCogmlt8M7qw9s71O+VSvXDeJmU/VVkVOFY1v3zFw9DZTvm12SQkdFk453MfEdFnE0ph3RYkValzplDovLEHYvzVWILVYFV/Ls5rm9qlUjTo5aIvXsAVyHkrNdscPdNDxT9Op4GVaYzJryg3TSQsiWntuW688/duHUx2/my8IYyeyj5TXp8SU31wM/VIBnogwyU20kfcXPpEWyv41FN2hleJBl78zBS0lqtZ1AVxP/E5GbrI3nwtu2t7AIzU4U0bPdSRt4b41zwsYTus4k4WOHB6LKswBqE8QFKtcGQpUOHdggxORboKb7Cvf0a3IxbwOQrodCZDia32OAhs+HodX62B51hymR4ccTLcpi8PoIxTU8WE8FbDJE22Su6fE4LpBpq7mUDnPS7kBpCiSXq5XTk6Ssk3VkwxSbzkTiPgL7L/c0n7+yYxywciN8AlIf7opC+/xgfzR8hKrHZYb9bYBAW+u7YvKsdF/1HpwCmtQtZm4EirRdfRlfPCl07DQW55BAhZKboVPb+lHVKogZipVd/vMZynlDrHSSkn6rMAWQ2uZdAAxWm+eBfKNst8wPo/sW5khJIHs=
+cache:
+  directories:
+    - $HOME/.coursier
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt
+
+before_cache:
+  - find $HOME/.ivy2/cache -name "ivydata-*.properties" -print -delete
+  - find $HOME/.sbt        -name "*.lock"               -print -delete
+
+notifications:
+  email:
+    on_success: never
