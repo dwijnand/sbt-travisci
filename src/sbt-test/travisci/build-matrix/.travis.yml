@@ -1,0 +1,9 @@
+language: scala
+matrix:
+  include:
+   - scala: 2.10.6
+     jdk: openjdk6
+   - scala: 2.11.8
+     jdk: openjdk6
+   - scala: 2.12.0
+     jdk: oraclejdk8
