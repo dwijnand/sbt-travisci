@@ -13,7 +13,10 @@ object TravisCiPlugin extends AutoPlugin {
         Option(new org.yaml.snakeyaml.Yaml().load(fis))
           .collect { case map: java.util.Map[_, _] => Option(map get "scala") }
           .flatten
-          .collect { case versions: java.util.List[_] => versions.asScala.toList map (_.toString) }
+          .collect {
+            case versions: java.util.List[_] => versions.asScala.toList map (_.toString)
+            case version: String             => version :: Nil
+          }
           .getOrElse(List(scalaVersion.value))
       )
     }

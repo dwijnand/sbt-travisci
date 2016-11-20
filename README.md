@@ -26,10 +26,9 @@ Other than that, as `sbt-travisci` is an AutoPlugin that is all that is required
 
 `crossScalaVersions in ThisBuild` will be automatically set to the scala versions in `.travis.yml`.
 
-**NOTE**: It currently doesn't support build matrices ([#2][]) nor single Scala versions ([#3][]).
+**NOTE**: It currently doesn't support build matrices ([#2][]).
 
 [#2]: https://github.com/dwijnand/sbt-travisci/issues/2
-[#3]: https://github.com/dwijnand/sbt-travisci/issues/3
 
 ## Dependencies
 
