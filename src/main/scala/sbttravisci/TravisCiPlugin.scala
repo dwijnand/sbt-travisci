@@ -19,6 +19,7 @@ object TravisCiPlugin extends AutoPlugin {
             case versions: java.util.List[_] => versions.asScala.toList map (_.toString)
             case version: String             => version :: Nil
           }
+          .getOrElse(Nil)
 
         def fromMatrixInclude = yaml
           .flatMap(map => Option(map get "matrix"))
@@ -28,8 +29,10 @@ object TravisCiPlugin extends AutoPlugin {
               Option(map get "scala") map (_.toString)
             }.flatten
           }
+          .getOrElse(Nil)
 
-        fromMatrixInclude orElse fromRoot getOrElse List(scalaVersion.value)
+        val versions = fromRoot ++ fromMatrixInclude
+        if (versions.isEmpty) List(scalaVersion.value) else versions
       }
     }
   )
