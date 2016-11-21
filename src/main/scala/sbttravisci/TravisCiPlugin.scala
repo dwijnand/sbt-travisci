@@ -12,9 +12,11 @@ object TravisCiPlugin extends AutoPlugin {
 
   override def requires = plugins.JvmPlugin
   override def trigger  = allRequirements
-  override def buildSettings = Seq(
-    isTravisBuild := sys.env.get("TRAVIS").isDefined,
 
+  override def globalSettings = Seq(
+    isTravisBuild := sys.env.get("TRAVIS").isDefined)
+
+  override def buildSettings = Seq(
     scalaVersion := {
       if (isTravisBuild.value)
         sys.env.get("TRAVIS_SCALA_VERSION").get
