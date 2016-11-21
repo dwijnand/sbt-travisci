@@ -24,7 +24,15 @@ Other than that, as `sbt-travisci` is an AutoPlugin that is all that is required
 
 ## Detail
 
-`crossScalaVersions in ThisBuild` will be automatically set to the scala versions in `.travis.yml`.  `scalaVersion in ThisBuild` will be automatically set to the `last` version in `crossScalaVersions`, and so by default, SBT will assume you want to develop under the *last* version listed in `.travis.yml`.
+`crossScalaVersions in ThisBuild` will be automatically set to the scala versions in `.travis.yml`.  `scalaVersion in ThisBuild` will be automatically set to the `last` version in `crossScalaVersions`, and so by default, sbt will assume you want to develop under the *last* version listed in `.travis.yml`:
+
+```yaml
+scala:
+  - 2.11.8
+  - 2.12.0
+```
+
+In the above snippet, the default `scalaVersion` value will be `"2.12.0"`.
 
 Additionally, the `isTravisBuild` setting is defined to be a `Boolean` flag which is `true` iff the current build is running under Travis.
 
