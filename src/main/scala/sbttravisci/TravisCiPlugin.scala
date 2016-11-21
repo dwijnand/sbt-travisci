@@ -3,7 +3,6 @@ package sbttravisci
 import sbt._, Keys._
 
 object TravisCiPlugin extends AutoPlugin {
-  private val DefaultScalaVersion = "2.10.6"    // for compatibility with stock sbt
 
   object autoImport {
     val isTravisBuild = settingKey[Boolean]("Flag indicating whether the current build is running under Travis")
@@ -49,7 +48,10 @@ object TravisCiPlugin extends AutoPlugin {
           .getOrElse(Nil)
 
         val versions = fromRoot ++ fromMatrixInclude
-        if (versions.isEmpty) List(DefaultScalaVersion) else versions
+        if (versions.isEmpty)
+          sys.error("unable to parse Scala versions out of .travis.yml; either file is missing or contents are ill-structured")
+        else
+          versions
       }
     }
   )
