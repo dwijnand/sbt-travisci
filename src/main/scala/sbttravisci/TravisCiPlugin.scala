@@ -3,9 +3,27 @@ package sbttravisci
 import sbt._, Keys._
 
 object TravisCiPlugin extends AutoPlugin {
+
+  object autoImport {
+    val isTravisBuild = settingKey[Boolean]("Flag indicating whether the current build is running under Travis")
+  }
+
+  import autoImport._
+
   override def requires = plugins.JvmPlugin
   override def trigger  = allRequirements
+
+  override def globalSettings = Seq(
+    isTravisBuild := sys.env.get("TRAVIS").isDefined)
+
   override def buildSettings = Seq(
+    scalaVersion := {
+      if (isTravisBuild.value)
+        sys.env.get("TRAVIS_SCALA_VERSION").get
+      else
+        crossScalaVersions.value.last   // sort .travis.yml versions in ascending order
+    },
+
     // parses Scala versions out of .travis.yml (doesn't support build matrices)
     crossScalaVersions := {
       import scala.collection.JavaConverters._
@@ -32,7 +50,10 @@ object TravisCiPlugin extends AutoPlugin {
           .getOrElse(Nil)
 
         val versions = fromRoot ++ fromMatrixInclude
-        if (versions.isEmpty) List(scalaVersion.value) else versions
+        if (versions.isEmpty)
+          sys.error("unable to parse Scala versions out of .travis.yml; either file is missing or contents are ill-structured")
+        else
+          versions
       }
     }
   )
