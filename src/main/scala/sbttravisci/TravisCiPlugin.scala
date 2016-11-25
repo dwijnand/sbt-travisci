@@ -29,7 +29,7 @@ object TravisCiPlugin extends AutoPlugin {
       val log = sLog.value
 
       val manifest = baseDirectory.value / ".travis.yml"
-      val default = Seq("2.10.6")     // this avoids cyclic dependency issues
+      val default = (crossScalaVersions in Global).value     // this avoids cyclic dependency issues
 
       if (manifest.exists()) {
         import scala.collection.JavaConverters._
