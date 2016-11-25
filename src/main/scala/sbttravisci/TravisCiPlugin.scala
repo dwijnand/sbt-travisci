@@ -26,34 +26,50 @@ object TravisCiPlugin extends AutoPlugin {
 
     // parses Scala versions out of .travis.yml (doesn't support build matrices)
     crossScalaVersions := {
-      import scala.collection.JavaConverters._
-      Using.fileInputStream(baseDirectory.value / ".travis.yml") { fis =>
-        val yaml = Option(new org.yaml.snakeyaml.Yaml().load(fis))
-          .collect { case map: java.util.Map[_, _] => map }
+      val log = sLog.value
 
-        def fromRoot = yaml
-          .flatMap(map => Option(map get "scala"))
-          .collect {
-            case versions: java.util.List[_] => versions.asScala.toList map (_.toString)
-            case version: String             => version :: Nil
+      val manifest = baseDirectory.value / ".travis.yml"
+      val default = (crossScalaVersions in Global).value     // this avoids cyclic dependency issues
+
+      if (manifest.exists()) {
+        import scala.collection.JavaConverters._
+        Using.fileInputStream(manifest) { fis =>
+          val yaml = Option(new org.yaml.snakeyaml.Yaml().load(fis))
+            .collect { case map: java.util.Map[_, _] => map }
+
+          def fromRoot = yaml
+            .flatMap(map => Option(map get "scala"))
+            .collect {
+              case versions: java.util.List[_] => versions.asScala.toList map (_.toString)
+              case version: String             => version :: Nil
+            }
+            .getOrElse(Nil)
+
+          def fromMatrixInclude = yaml
+            .flatMap(map => Option(map get "matrix"))
+            .collect { case map: java.util.Map[_, _] => Option(map get "include") }.flatten
+            .collect { case versions: java.util.List[_] =>
+              versions.asScala.toList.collect { case map: java.util.Map[_, _] =>
+                Option(map get "scala") map (_.toString)
+              }.flatten
+            }
+            .getOrElse(Nil)
+
+          val versions = fromRoot ++ fromMatrixInclude
+
+          if (versions.isEmpty) {
+            log.warn("unable to parse Scala versions out of .travis.yml; contents may be ill-structured")
+            log.warn(s"defaulting Scala version to ${default.last}")
+
+            default
+          } else {
+            versions
           }
-          .getOrElse(Nil)
+        }
+      } else {
+        log.warn(s"unable to locate .travis.yml file; defaulting Scala version to ${default.last}")
 
-        def fromMatrixInclude = yaml
-          .flatMap(map => Option(map get "matrix"))
-          .collect { case map: java.util.Map[_, _] => Option(map get "include") }.flatten
-          .collect { case versions: java.util.List[_] =>
-            versions.asScala.toList.collect { case map: java.util.Map[_, _] =>
-              Option(map get "scala") map (_.toString)
-            }.flatten
-          }
-          .getOrElse(Nil)
-
-        val versions = fromRoot ++ fromMatrixInclude
-        if (versions.isEmpty)
-          sys.error("unable to parse Scala versions out of .travis.yml; either file is missing or contents are ill-structured")
-        else
-          versions
+        default
       }
     }
   )
