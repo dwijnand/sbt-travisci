@@ -1,2 +1,8 @@
 - Initial implementation.
-- `crossScalaVersions in ThisBuild` will be automatically set to the scala versions in `.travis.yml`.
+- `isTravisBuild in Global` will be automatically be set to `true` if the current build is running under Travis
+    CI.
+- `crossScalaVersions in ThisBuild` will be automatically set to the scala versions in `.travis.yml`, falling
+    back (with warnings) to the value of `crossScalaVersions in Global` if it can't be found or parsed properly.
+- `scalaVersion in ThisBuild` will be automatically set to `TRAVIS_SCALA_VERSION` if `isTravisBuild` is true,
+    otherwise to the `last` version in `crossScalaVersions`, and so by default, sbt will assume you want to
+    develop under the *last* version listed in `.travis.yml`.

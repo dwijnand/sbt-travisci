@@ -1,12 +1,11 @@
 # [sbt-travisci][] [![travis-badge][]](https://travis-ci.org/dwijnand/sbt-travisci)
 
-[sbt-travisci]: https://github.com/dwijnand/sbt-travisci
-[travis-badge]: https://travis-ci.org/dwijnand/sbt-travisci.svg?branch=master
-
 `sbt-travisci` is an [sbt](http://www.scala-sbt.org/) plugin to integrate with Travis CI.
 
 Original idea from [@djspiewak][] in his [djspiewak/base.g8][] template.
 
+[sbt-travisci]: https://github.com/dwijnand/sbt-travisci
+[travis-badge]: https://travis-ci.org/dwijnand/sbt-travisci.svg?branch=master
 [@djspiewak]: https://github.com/djspiewak
 [djspiewak/base.g8]: https://github.com/djspiewak/base.g8/blob/d75ba6e1628517124bd867d190373ee777814354/src/main/g8/build.sbt
 
@@ -14,9 +13,7 @@ Original idea from [@djspiewak][] in his [djspiewak/base.g8][] template.
 
 Add this to your sbt build plugins, in either `project/plugins.sbt` or `project/travisci.sbt`:
 
-    addSbtPlugin("com.dwijnand" % "sbt-travisci" % <latest-release>)
-
-Find the latest release from the [Releases tab](https://github.com/dwijnand/sbt-travisci/releases) in GitHub.
+    addSbtPlugin("com.dwijnand" % "sbt-travisci" % "1.0.0")
 
 Then make sure to **NOT set the `crossScalaVersions` setting**, otherwise you will override `sbt-travisci`.
 
@@ -24,7 +21,17 @@ Other than that, as `sbt-travisci` is an AutoPlugin that is all that is required
 
 ## Detail
 
-`crossScalaVersions in ThisBuild` will be automatically set to the scala versions in `.travis.yml`.  `scalaVersion in ThisBuild` will be automatically set to the `last` version in `crossScalaVersions`, and so by default, sbt will assume you want to develop under the *last* version listed in `.travis.yml`:
+- `isTravisBuild in Global` will be automatically be set to `true` if the current build is running under Travis
+    CI.
+- `crossScalaVersions in ThisBuild` will be automatically set to the scala versions in `.travis.yml`, falling
+    back (with warnings) to the value of `crossScalaVersions in Global` if it can't be found or parsed properly.
+- `scalaVersion in ThisBuild` will be automatically set to `TRAVIS_SCALA_VERSION` if `isTravisBuild` is true,
+    otherwise to the `last` version in `crossScalaVersions`, and so by default, sbt will assume you want to
+    develop under the *last* version listed in `.travis.yml`.
+
+### Example
+
+Given a `.travis.yml` of:
 
 ```yaml
 scala:
@@ -32,13 +39,7 @@ scala:
   - 2.12.0
 ```
 
-In the above snippet, the default `scalaVersion` value will be `"2.12.0"`.
-
-Additionally, the `isTravisBuild` setting is defined to be a `Boolean` flag which is `true` iff the current build is running under Travis.
-
-## Dependencies
-
-Depends on the presence of a `.travis.yml` file at the root of the project.
+`scalaVersion in ThisBuild` will be `"2.12.0"`.
 
 ## Licence
 
