@@ -9,7 +9,7 @@ object TravisCiPlugin extends AutoPlugin {
 
   object autoImport {
     val isTravisBuild = settingKey[Boolean]("Flag indicating whether the current build is running under Travis")
-    val prBuildNumber = settingKey[Option[Int]]("Number of the PR, if the build is a pull request build. Empty otherwise")
+    val travisPrNumber = settingKey[Option[Int]]("Number of the PR, if the build is a pull request build. Empty otherwise")
   }
 
   import autoImport._
@@ -19,7 +19,7 @@ object TravisCiPlugin extends AutoPlugin {
 
   override def globalSettings = Seq(
     isTravisBuild := sys.env.get("TRAVIS").isDefined,
-    prBuildNumber := Try {
+    travisPrNumber := Try {
       sys.env.get("TRAVIS_PULL_REQUEST") map (_.toInt)
     } getOrElse None
   )
