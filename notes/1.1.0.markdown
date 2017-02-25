@@ -1,2 +1,7 @@
-- `travisPrNumber in Global` will be automatically set to the number of the pull request, in case the build is a pull request build. 
-		Otherwise, it will have a value of `None`
+### Improvements
+
+- Introduces `travisPrNumber`: `travisPrNumber in Global` will be automatically set to the number of the pull request, in case the build is a pull request build.
+   Otherwise, it will have a value of `None`. [#12][] by [@EmilDafinov][]
+
+  [#12]: https://github.com/dwijnand/sbt-travisci/pull/12
+  [@EmilDafinov]: https://github.com/EmilDafinov
