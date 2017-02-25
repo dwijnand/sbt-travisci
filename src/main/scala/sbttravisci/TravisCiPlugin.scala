@@ -1,11 +1,15 @@
 package sbttravisci
 
-import sbt._, Keys._
+import sbt._
+import Keys._
+
+import scala.util.Try
 
 object TravisCiPlugin extends AutoPlugin {
 
   object autoImport {
     val isTravisBuild = settingKey[Boolean]("Flag indicating whether the current build is running under Travis")
+    val prBuildNumber = settingKey[Option[Int]]("Number of the PR, if the build is a pull request build. Empty otherwise")
   }
 
   import autoImport._
@@ -14,7 +18,11 @@ object TravisCiPlugin extends AutoPlugin {
   override def trigger  = allRequirements
 
   override def globalSettings = Seq(
-    isTravisBuild := sys.env.get("TRAVIS").isDefined)
+    isTravisBuild := sys.env.get("TRAVIS").isDefined,
+    prBuildNumber := Try {
+      sys.env.get("TRAVIS_PULL_REQUEST") map (_.toInt)
+    } getOrElse None
+  )
 
   override def buildSettings = Seq(
     scalaVersion := {
