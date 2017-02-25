@@ -36,7 +36,7 @@ scriptedBufferLog := true
 def toSbtPlugin(m: ModuleID) = Def.setting(
   Defaults.sbtPluginExtra(m, (sbtBinaryVersion in update).value, (scalaBinaryVersion in update).value)
 )
-mimaPreviousArtifacts := Set(toSbtPlugin("com.dwijnand" % "sbt-travisci" % "1.0.0").value)
+mimaPreviousArtifacts := Set(toSbtPlugin("com.dwijnand" % "sbt-travisci" % "1.1.0").value)
 
 TaskKey[Unit]("verify") := Def.sequential(test in Test, scripted.toTask(""), mimaReportBinaryIssues).value
 
