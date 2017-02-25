@@ -1,3 +1,4 @@
+
 # [sbt-travisci][] [![travis-badge][]](https://travis-ci.org/dwijnand/sbt-travisci)
 
 `sbt-travisci` is an [sbt](http://www.scala-sbt.org/) plugin to integrate with Travis CI.
@@ -23,6 +24,8 @@ Other than that, as `sbt-travisci` is an AutoPlugin that is all that is required
 
 - `isTravisBuild in Global` will be automatically be set to `true` if the current build is running under Travis
     CI.
+- `travisPrNumber in Global` will be automatically set to the number of the pull request, in case the build is a pull request build. 
+		Otherwise, it will have a value of `None` 
 - `crossScalaVersions in ThisBuild` will be automatically set to the scala versions in `.travis.yml`, falling
     back (with warnings) to the value of `crossScalaVersions in Global` if it can't be found or parsed properly.
 - `scalaVersion in ThisBuild` will be automatically set to `TRAVIS_SCALA_VERSION` if `isTravisBuild` is true,
