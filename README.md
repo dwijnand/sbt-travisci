@@ -1,11 +1,15 @@
-# [sbt-travisci][] [![travis-badge][]](https://travis-ci.org/dwijnand/sbt-travisci)
+# [sbt-travisci][] [![travis-badge][]][travis] [![gitter-badge][]][gitter]
+
+[sbt-travisci]:         https://github.com/dwijnand/sbt-travisci
+[travis]:          https://travis-ci.org/dwijnand/sbt-travisci
+[travis-badge]:    https://travis-ci.org/dwijnand/sbt-travisci.svg?branch=master
+[gitter]:              https://gitter.im/dwijnand/sbt-travisci
+[gitter-badge]: https://badges.gitter.im/dwijnand/sbt-travisci.svg
 
 `sbt-travisci` is an [sbt](http://www.scala-sbt.org/) plugin to integrate with Travis CI.
 
 Original idea from [@djspiewak][] in his [djspiewak/base.g8][] template.
 
-[sbt-travisci]: https://github.com/dwijnand/sbt-travisci
-[travis-badge]: https://travis-ci.org/dwijnand/sbt-travisci.svg?branch=master
 [@djspiewak]: https://github.com/djspiewak
 [djspiewak/base.g8]: https://github.com/djspiewak/base.g8/blob/d75ba6e1628517124bd867d190373ee777814354/src/main/g8/build.sbt
 
