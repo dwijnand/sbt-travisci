@@ -29,7 +29,13 @@ object TravisCiPlugin extends AutoPlugin {
       if (isTravisBuild.value)
         sys.env.get("TRAVIS_SCALA_VERSION").get
       else
-        crossScalaVersions.value.last   // sort .travis.yml versions in ascending order
+        crossScalaVersions
+	  .value
+	  .filter(v => v.forall(c => c.isDigit || c == '.')) // loose attempt at keeping only stable versions
+	  .lastOption
+	  .getOrElse {
+            crossScalaVersions.value.last   // sort .travis.yml versions in ascending order
+        }
     },
 
     // parses Scala versions out of .travis.yml (doesn't support build matrices)
