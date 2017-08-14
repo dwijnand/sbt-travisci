@@ -9,8 +9,15 @@ organization := "com.dwijnand"
     homepage := scmInfo.value map (_.browseUrl)
      scmInfo := Some(ScmInfo(url("https://github.com/dwijnand/sbt-travisci"), "scm:git:git@github.com:dwijnand/sbt-travisci.git"))
 
-   sbtPlugin := true
-scalaVersion := "2.10.6"
+                 sbtPlugin := true
+      sbtVersion in Global := "0.13.13" // must be Global, otherwise ^^ won't change anything
+crossSbtVersions           := List("0.13.13", "1.0.0")
+
+scalaVersion := (CrossVersion partialVersion (sbtVersion in pluginCrossBuild).value match {
+  case Some((0, 13)) => "2.10.6"
+  case Some((1, _))  => "2.12.3"
+  case _             => sys error s"Unhandled sbt version ${(sbtVersion in pluginCrossBuild).value}"
+})
 
        maxErrors := 15
 triggeredMessage := Watched.clearWhenTriggered
@@ -36,7 +43,12 @@ scriptedBufferLog := true
 def toSbtPlugin(m: ModuleID) = Def.setting(
   Defaults.sbtPluginExtra(m, (sbtBinaryVersion in update).value, (scalaBinaryVersion in update).value)
 )
-mimaPreviousArtifacts := Set(toSbtPlugin("com.dwijnand" % "sbt-travisci" % "1.1.0").value)
+
+mimaPreviousArtifacts := (CrossVersion partialVersion (sbtVersion in pluginCrossBuild).value match {
+  case Some((0, 13)) => Set(toSbtPlugin("com.dwijnand" % "sbt-travisci" % "1.1.0").value)
+  case Some((1, _))  => Set.empty
+  case _             => sys error s"Unhandled sbt version ${(sbtVersion in pluginCrossBuild).value}"
+})
 
 TaskKey[Unit]("verify") := Def.sequential(test in Test, scripted.toTask(""), mimaReportBinaryIssues).value
 
