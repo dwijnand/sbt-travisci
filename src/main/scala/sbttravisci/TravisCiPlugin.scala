@@ -1,7 +1,7 @@
 package sbttravisci
 
-import sbt._
-import Keys._
+import sbt.io.Using
+import sbt._, Keys._
 
 import scala.util.Try
 

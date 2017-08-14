@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+case "$TRAVIS_SBT_VERSION" in
+  0.13.x) SWITCH_SBT_VERSION="";        SCRIPTED="scripted" ;;
+     1.x) SWITCH_SBT_VERSION="^^1.0.0"; SCRIPTED=""         ;;
+       *) echo >&2 "Aborting: Unknown TRAVIS_SBT_VERSION: $TRAVIS_SBT_VERSION"; exit 1; ;;
+esac
+
 [[ "$TRAVIS_PULL_REQUEST" == "false"
 && "$TRAVIS_BRANCH" == "master"
 && "$TRAVIS_SECURE_ENV_VARS" == "true"
@@ -24,4 +30,4 @@ else
   PUBLISH=publishLocal
 fi
 
-sbt ++$TRAVIS_SCALA_VERSION verify "$PUBLISH"
+sbt "$SWITCH_SBT_VERSION" test "$SCRIPTED" mimaReportBinaryIssues "$PUBLISH"
