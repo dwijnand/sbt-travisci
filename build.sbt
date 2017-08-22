@@ -50,7 +50,7 @@ def toSbtPlugin(m: ModuleID) = Def.setting(
 )
 
 mimaPreviousArtifacts := (CrossVersion partialVersion (sbtVersion in pluginCrossBuild).value match {
-  case Some((0, 13)) => Set(toSbtPlugin("com.dwijnand" % "sbt-travisci" % "1.1.0").value)
+  case Some((0, 13)) => Set(toSbtPlugin("com.dwijnand" % "sbt-travisci" % "1.1.1").value)
   case Some((1, _))  => Set.empty
   case _             => sys error s"Unhandled sbt version ${(sbtVersion in pluginCrossBuild).value}"
 })
