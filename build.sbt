@@ -30,6 +30,11 @@ scalacOptions  += "-Ywarn-dead-code"
 scalacOptions  += "-Ywarn-numeric-widen"
 scalacOptions  += "-Ywarn-value-discard"
 
+libraryDependencies += Defaults.sbtPluginExtra(
+  "com.dwijnand" % "sbt-compat" % "1.0.0",
+  (sbtBinaryVersion in pluginCrossBuild).value,
+  (scalaBinaryVersion in update).value
+)
 libraryDependencies += "org.yaml" % "snakeyaml" % "1.17"
 
              fork in Test := false
