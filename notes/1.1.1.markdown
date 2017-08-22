@@ -1,0 +1,10 @@
+### Enhancements
+
++ Switches to using [sbt-compat][] to avoid runtime errors like [typesafehub/sbt-whitesource#20][].
+  [#17][] by [@dwijnand][]
+
+[sbt-compat]: https://github.com/dwijnand/sbt-compat
+[typesafehub/sbt-whitesource#20]: https://github.com/typesafehub/sbt-whitesource/issues/20
+
+[#17]: https://github.com/dwijnand/sbt-travisci/pull/17
+[@dwijnand]: https://github.com/dwijnand
