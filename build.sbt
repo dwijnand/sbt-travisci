@@ -57,4 +57,6 @@ mimaPreviousArtifacts := (CrossVersion partialVersion (sbtVersion in pluginCross
 
 TaskKey[Unit]("verify") := Def.sequential(test in Test, scripted.toTask(""), mimaReportBinaryIssues).value
 
+scalafixVerbose in ThisBuild := true
+
 cancelable in Global := true
