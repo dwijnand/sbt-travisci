@@ -63,7 +63,7 @@ object TravisCiPlugin extends AutoPlugin {
             }
             .getOrElse(Nil)
 
-          val versions = fromRoot ++ fromMatrixInclude
+          val versions = (fromRoot ++ fromMatrixInclude).distinct
 
           if (versions.isEmpty) {
             log.warn("unable to parse Scala versions out of .travis.yml; contents may be ill-structured")
