@@ -17,7 +17,7 @@ Original idea from [@djspiewak][] in his [djspiewak/base.g8][] template.
 
 Add this to your sbt build plugins, in either `project/plugins.sbt` or `project/travisci.sbt`:
 
-    addSbtPlugin("com.dwijnand" % "sbt-travisci" % "1.1.1")
+    addSbtPlugin("com.dwijnand" % "sbt-travisci" % "1.1.2")
 
 Then make sure to **NOT set the `crossScalaVersions` setting**, otherwise you will override `sbt-travisci`.
 

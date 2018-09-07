@@ -1,0 +1,3 @@
+### Enhancements
+
+- Remove duplicates in versions (useful when your matrix includes multiple JVM versions) by [@xuwei-k](https://github.com/xuwei-k)
