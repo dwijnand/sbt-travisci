@@ -10,12 +10,12 @@ organization := "com.dwijnand"
      scmInfo := Some(ScmInfo(url("https://github.com/dwijnand/sbt-travisci"), "scm:git:git@github.com:dwijnand/sbt-travisci.git"))
 
                  sbtPlugin := true
-      sbtVersion in Global := "0.13.13" // must be Global, otherwise ^^ won't change anything
-crossSbtVersions           := List("0.13.13", "1.0.0")
+      sbtVersion in Global := "0.13.17" // must be Global, otherwise ^^ won't change anything
+crossSbtVersions           := List("0.13.17", "1.2.1")
 
 scalaVersion := (CrossVersion partialVersion (sbtVersion in pluginCrossBuild).value match {
-  case Some((0, 13)) => "2.10.6"
-  case Some((1, _))  => "2.12.3"
+  case Some((0, 13)) => "2.10.7"
+  case Some((1, _))  => "2.12.6"
   case _             => sys error s"Unhandled sbt version ${(sbtVersion in pluginCrossBuild).value}"
 })
 
@@ -30,11 +30,8 @@ scalacOptions  += "-Ywarn-dead-code"
 scalacOptions  += "-Ywarn-numeric-widen"
 scalacOptions  += "-Ywarn-value-discard"
 
-libraryDependencies += Defaults.sbtPluginExtra(
-  "com.dwijnand" % "sbt-compat" % "1.0.0",
-  (sbtBinaryVersion in pluginCrossBuild).value,
-  (scalaBinaryVersion in update).value
-)
+addSbtPlugin("com.dwijnand" % "sbt-compat" % "1.2.6")
+
 libraryDependencies += "org.yaml" % "snakeyaml" % "1.17"
 
              fork in Test := false
