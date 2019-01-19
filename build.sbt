@@ -10,8 +10,8 @@ organization := "com.dwijnand"
      scmInfo := Some(ScmInfo(url("https://github.com/dwijnand/sbt-travisci"), "scm:git:git@github.com:dwijnand/sbt-travisci.git"))
 
                  sbtPlugin := true
-      sbtVersion in Global := "0.13.17" // must be Global, otherwise ^^ won't change anything
-crossSbtVersions           := List("0.13.17", "1.2.1")
+      sbtVersion in Global := "0.13.18" // must be Global, otherwise ^^ won't change anything
+crossSbtVersions           := List("0.13.18", "1.2.1")
 
 scalaVersion := (CrossVersion partialVersion (sbtVersion in pluginCrossBuild).value match {
   case Some((0, 13)) => "2.10.7"
