@@ -50,6 +50,28 @@ scala:
 
 `scalaVersion in ThisBuild` will be `"2.12.0"`.
 
+## Sanity checking a scala version key
+
+As a sanity check, you can stop the build from loading by running a check during sbt's `onLoad`.
+For instance, to make sure that `scala212` is defines a scala version you can use:
+
+```scala
+Global / onLoad := (Global / onLoad).value.andThen { s =>
+  val v = scala212.value
+  if (!CrossVersion.isScalaApiCompatible(v))
+    throw new MessageOnlyException(
+      s"Key scala212 doesn't define a scala version. Check .travis.yml is setup right. Version: $v"
+    )
+  s
+}
+```
+
+This will return an error message like the following:
+
+```
+[error] Key scala212 doesn't define a scala version. Check .travis.yml is setup right. Version: no-2.12-version
+```
+
 ## Licence
 
 Copyright 2016 Dale Wijnand
