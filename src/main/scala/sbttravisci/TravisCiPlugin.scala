@@ -11,6 +11,11 @@ object TravisCiPlugin extends AutoPlugin {
   object autoImport {
     val isTravisBuild = settingKey[Boolean]("Flag indicating whether the current build is running under Travis")
     val travisPrNumber = settingKey[Option[Int]]("Number of the PR, if the build is a pull request build. Empty otherwise")
+
+    val scala210 = settingKey[String]("The Scala 2.10 version")
+    val scala211 = settingKey[String]("The Scala 2.11 version")
+    val scala212 = settingKey[String]("The Scala 2.12 version")
+    val scala213 = settingKey[String]("The Scala 2.13 version")
   }
 
   import autoImport._
@@ -24,6 +29,11 @@ object TravisCiPlugin extends AutoPlugin {
   )
 
   override def buildSettings = Seq(
+    scala210 := scalaVersionFor("2.10").value,
+    scala211 := scalaVersionFor("2.11").value,
+    scala212 := scalaVersionFor("2.12").value,
+    scala213 := scalaVersionFor("2.13").value,
+
     scalaVersion := {
       if (isTravisBuild.value)
         sys.env("TRAVIS_SCALA_VERSION")
@@ -80,4 +90,17 @@ object TravisCiPlugin extends AutoPlugin {
       }
     }
   )
+
+  private def scalaVersionFor(base: String) = Def.setting {
+    val log = sLog.value
+    val csv = (crossScalaVersions in ThisBuild).value
+    val x = csv.filter(_.startsWith(s"$base.")) match {
+      case Nil => s"no-$base-version"
+      case Seq(version) => version
+      case versions =>
+        log.warn(s"Multiple Scala $base versions found in .travis.yml")
+        s"multiple-$base-versions"
+    }
+    x
+  }
 }

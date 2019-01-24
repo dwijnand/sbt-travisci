@@ -34,6 +34,9 @@ Other than that, as `sbt-travisci` is an AutoPlugin that is all that is required
 - `scalaVersion in ThisBuild` will be automatically set to `TRAVIS_SCALA_VERSION` if `isTravisBuild` is true,
     otherwise to the `last` version in `crossScalaVersions`, and so by default, sbt will assume you want to
     develop under the *last* version listed in `.travis.yml`.
+- `scala212 in ThisBuild` will be automatically set to the unique 2.12.x version in `.travis.yml`, or
+    "no-2.12-version" if none set and "multiple-2.12-versions" (with a warning log) if multiple set.  Same for
+    `scala210`, `scala211`, and `scala213`.
 
 ### Example
 
@@ -46,6 +49,28 @@ scala:
 ```
 
 `scalaVersion in ThisBuild` will be `"2.12.0"`.
+
+## Sanity checking a scala version key
+
+As a sanity check, you can stop the build from loading by running a check during sbt's `onLoad`.
+For instance, to make sure that `scala212` is defines a scala version you can use:
+
+```scala
+Global / onLoad := (Global / onLoad).value.andThen { s =>
+  val v = scala212.value
+  if (!CrossVersion.isScalaApiCompatible(v))
+    throw new MessageOnlyException(
+      s"Key scala212 doesn't define a scala version. Check .travis.yml is setup right. Version: $v"
+    )
+  s
+}
+```
+
+This will return an error message like the following:
+
+```
+[error] Key scala212 doesn't define a scala version. Check .travis.yml is setup right. Version: no-2.12-version
+```
 
 ## Licence
 
