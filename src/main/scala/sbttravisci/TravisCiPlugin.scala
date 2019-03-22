@@ -50,7 +50,7 @@ object TravisCiPlugin extends AutoPlugin {
 
       if (manifest.exists()) {
         Using.fileInputStream(manifest) { fis =>
-          val yaml = Option(new org.yaml.snakeyaml.Yaml().load(fis))
+          val yaml = Option(new org.yaml.snakeyaml.Yaml().load[Any](fis))
             .collect { case map: java.util.Map[_, _] => map }
 
           import scala.collection.JavaConverters._
