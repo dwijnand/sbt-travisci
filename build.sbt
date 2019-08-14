@@ -32,7 +32,7 @@ scalacOptions  += "-Ywarn-value-discard"
 
 addSbtPlugin("com.dwijnand" % "sbt-compat" % "1.2.6")
 
-libraryDependencies += "org.yaml" % "snakeyaml" % "1.24"
+libraryDependencies += "org.yaml" % "snakeyaml" % "1.25"
 
              fork in Test := false
       logBuffered in Test := false
