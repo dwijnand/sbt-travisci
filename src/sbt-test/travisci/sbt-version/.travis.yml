@@ -1,0 +1,4 @@
+language: scala
+jdk: oraclejdk8
+scala: 2.12.9
+env: TRAVIS_SBT_VERSION="0.13.0" foo="bar"

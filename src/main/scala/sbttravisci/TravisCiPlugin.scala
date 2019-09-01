@@ -47,7 +47,7 @@ object TravisCiPlugin extends AutoPlugin {
 
       val manifest = baseDirectory.value / ".travis.yml"
       val default = (crossScalaVersions in Global).value     // this avoids cyclic dependency issues
-
+      
       if (manifest.exists()) {
         Using.fileInputStream(manifest) { fis =>
           val yaml = Option(new org.yaml.snakeyaml.Yaml().load[Any](fis))
@@ -86,6 +86,70 @@ object TravisCiPlugin extends AutoPlugin {
         }
       } else {
         log.warn(s"unable to locate .travis.yml file; defaulting Scala version to ${default.last}")
+        default
+      }
+    },
+
+    sbtVersion := {
+      if (isTravisBuild.value)
+        sys.env("TRAVIS_SBT_VERSION")
+      else {
+        crossSbtVersions.value.last // sort .travis.yml versions in ascending order
+      }
+    },
+
+    // parses SBT versions out of .travis.yml
+    crossSbtVersions := {
+      val log = sLog.value
+
+      val manifest = baseDirectory.value / ".travis.yml"
+      val default = (crossSbtVersions in Global).?.value.getOrElse(Seq.empty) match {
+        case Seq() => Seq((sbtVersion in Global).value)
+        case otherwise => otherwise
+      }
+
+      def parseEnvLine(str: String): Option[String] = {
+        "TRAVIS_SBT_VERSION=\"?([a-zA-Z0-9.-]+)".r.findFirstMatchIn(str).map(_.group(1))
+      }
+
+      if (manifest.exists()) {
+        Using.fileInputStream(manifest) { fis =>
+          val yaml = Option(new org.yaml.snakeyaml.Yaml().load[Any](fis))
+            .collect { case map: java.util.Map[_, _] => map }
+
+          import scala.collection.JavaConverters._
+          val fromRoot = yaml
+            .flatMap(map => Option(map get "env"))
+            .collect {
+              case envs: java.util.List[_] => envs.iterator.asScala.map(_.toString).map(parseEnvLine).toList.flatten
+              case env: String             => parseEnvLine(env).toList
+            }
+            .getOrElse(Nil)
+
+          val fromMatrixInclude: List[String] = yaml
+            .flatMap(map => Option(map get "matrix"))
+            .collect { case map: java.util.Map[_, _] => Option(map get "include") }
+            .flatten
+            .collect { case versions: java.util.List[_] =>
+              versions.iterator.asScala
+                .collect { case map: java.util.Map[_, _] => Option(map get "env").map(_.toString).flatMap(parseEnvLine) }
+                .flatten
+                .toList
+            }
+            .getOrElse(Nil)
+
+          val versions = (fromRoot ++ fromMatrixInclude).distinct
+
+          if (versions.isEmpty) {
+            log.warn("unable to parse TRAVIS_SBT_VERSION out of .travis.yml; contents may be ill-structured")
+            log.warn(s"defaulting SBT version to ${default.last}")
+            default
+          } else {
+            versions
+          }
+        }
+      } else {
+        log.warn(s"unable to locate .travis.yml file; defaulting SBT version to ${default.last}")
         default
       }
     }

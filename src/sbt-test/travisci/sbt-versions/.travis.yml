@@ -1,0 +1,7 @@
+language: scala
+jdk: oraclejdk8
+scala: 2.12.9
+env:
+  - TRAVIS_SBT_VERSION="0.13.17" foo="1"
+  - TRAVIS_SBT_VERSION="1.2.0"   foo="1"
+  - TRAVIS_SBT_VERSION="1.2.0"   foo="100"
