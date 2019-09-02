@@ -91,11 +91,7 @@ object TravisCiPlugin extends AutoPlugin {
     },
 
     sbtVersion := {
-      if (isTravisBuild.value)
-        sys.env("TRAVIS_SBT_VERSION")
-      else {
-        crossSbtVersions.value.last // sort .travis.yml versions in ascending order
-      }
+      sys.env.getOrElse("TRAVIS_SBT_VERSION", crossSbtVersions.value.last)
     },
 
     // parses SBT versions out of .travis.yml
