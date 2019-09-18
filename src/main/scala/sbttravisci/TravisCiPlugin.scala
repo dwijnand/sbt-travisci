@@ -10,6 +10,7 @@ object TravisCiPlugin extends AutoPlugin {
 
   object autoImport {
     val isTravisBuild = settingKey[Boolean]("Flag indicating whether the current build is running under Travis")
+    val isTravisCacheConfigured = settingKey[Boolean]("Flag indicating whether cache directories are properly configured for sbt/coursier")
     val travisPrNumber = settingKey[Option[Int]]("Number of the PR, if the build is a pull request build. Empty otherwise")
 
     val scala210 = settingKey[String]("The Scala 2.10 version")
@@ -47,7 +48,7 @@ object TravisCiPlugin extends AutoPlugin {
 
       val manifest = baseDirectory.value / ".travis.yml"
       val default = (crossScalaVersions in Global).value     // this avoids cyclic dependency issues
-      
+
       if (manifest.exists()) {
         Using.fileInputStream(manifest) { fis =>
           val yaml = Option(new org.yaml.snakeyaml.Yaml().load[Any](fis))
@@ -147,6 +148,58 @@ object TravisCiPlugin extends AutoPlugin {
       } else {
         log.warn(s"unable to locate .travis.yml file; defaulting SBT version to ${default.last}")
         default
+      }
+    },
+
+    isTravisCacheConfigured := {
+      val manifest = baseDirectory.value / ".travis.yml"
+      if (!manifest.exists()) {
+        // warned in crossScalaVersions
+        false
+      } else {
+        Using.fileInputStream(manifest) { fis =>
+          val log = sLog.value
+          val yaml = Option(new org.yaml.snakeyaml.Yaml().load[Any](fis))
+            .collect { case map: java.util.Map[_, _] => map }
+          import scala.collection.JavaConverters._
+          val cacheDirectories = yaml
+            .flatMap(map => Option(map.get("cache")))
+            .collect { case map: java.util.Map[_, _] => Option(map.get("directories")) }
+            .flatten
+            .collect { case directories: java.util.List[_] =>
+              directories.iterator.asScala
+                .collect { case dir: String => dir }
+                .toList
+            }
+            .getOrElse(Nil)
+
+          val isCoursierUsed = sbtBinaryVersion.value >= "1.3"
+          val (sbtDir, ivy2CacheDir, coursierCacheDir) = sys.env.get("TRAVIS_OS_NAME") match {
+            case Some("windows") => ("\\.sbt", "\\.ivy2\\cache","\\Coursier\\Cache")
+            case Some("osx") => ("/.sbt", "/.ivy2/cache","/Library/Caches/Coursier")
+            case _ => ("/.sbt", "/.ivy2/cache", "/.cache/coursier")
+          }
+          Seq(
+            if (cacheDirectories.exists(_.endsWith(sbtDir))) {
+              true
+            } else {
+              log.warn(s"${sbtDir} is not found in cache.directories in .travis.yml")
+              false
+            },
+            if (!cacheDirectories.exists(_.endsWith(ivy2CacheDir))) {
+              log.warn(s"${ivy2CacheDir} is not found in cache.directories in .travis.yml")
+              false
+            } else {
+              true
+            },
+            if (!isCoursierUsed || cacheDirectories.exists(_.endsWith(coursierCacheDir))) {
+              true
+            } else {
+              log.warn(s"${coursierCacheDir} is not found in cache.directories in .travis.yml")
+              false
+            }
+          ).reduce(_ && _)
+        }
       }
     }
   )
