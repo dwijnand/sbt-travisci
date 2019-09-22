@@ -42,6 +42,8 @@ Other than that, as `sbt-travisci` is an AutoPlugin that is all that is required
 - `sbtVersion in ThisBuild` will be automatically set to `TRAVIS_SBT_VERSION` if `isTravisBuild` is true,
     otherwise to the `last` version in `crossSbtVersions`, and so by default, sbt will assume you want to
     develop under the *last* version listed in `.travis.yml`.
+* `travisCacheConfiguredLog in ThisBuild` will log warnings if `cache.directories` in `.travis.yml` is not
+   configured properly. You can disable this warning by setting `travisCacheConfiguredLog in ThisBuild := (())`.
 
 ### Example
 
