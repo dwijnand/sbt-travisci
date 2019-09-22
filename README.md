@@ -37,6 +37,11 @@ Other than that, as `sbt-travisci` is an AutoPlugin that is all that is required
 - `scala212 in ThisBuild` will be automatically set to the unique 2.12.x version in `.travis.yml`, or
     "no-2.12-version" if none set and "multiple-2.12-versions" (with a warning log) if multiple set.  Same for
     `scala210`, `scala211`, and `scala213`.
+- `crossSbtVersions in ThisBuild` will be automatically set to the `TRAVIS_SBT_VERSION`s in `env` properties in `.travis.yml`, falling
+    back (with warnings) to the value of `crossSbtVersions in Global` if it can't be found or parsed properly.
+- `sbtVersion in ThisBuild` will be automatically set to `TRAVIS_SBT_VERSION` if `isTravisBuild` is true,
+    otherwise to the `last` version in `crossSbtVersions`, and so by default, sbt will assume you want to
+    develop under the *last* version listed in `.travis.yml`.
 
 ### Example
 
