@@ -1,6 +1,6 @@
 language: scala
 jdk: openjdk8
-scala: 2.10.7
+scala: 2.13.5
 script: project/travis.sh
 
 # Build only master and version tags - http://stackoverflow.com/a/31882307/463761
