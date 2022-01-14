@@ -2,8 +2,8 @@ def assertEq[A](left: A, right: A) = assert(left == right, s"$left != $right")
 
 TaskKey[Unit]("check") := {
   if (sbtVersion.value.startsWith("0.13")) {
-    assertEq(crossScalaVersions.value, Seq("2.10.7"))
-    assertEq(scala210.value, "2.10.7")
+    assertEq(crossScalaVersions.value, Seq("2.13.8"))
+    assertEq(scala210.value, "2.13.8")
     assertEq(scala212.value, "no-2.12-version")
   } else {
     assertEq(crossScalaVersions.value, Seq("2.12.6"))
